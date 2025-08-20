@@ -69,25 +69,28 @@ statement-finder --year 2024 --month "03-March" `
 
 # Or launch the GUI
 statement-finder-gui
-
-**Configuration
+---
+## Configuration
 
 Copy the example and update the paths:
+
 Copy-Item config.example.yaml config.yaml
+
 
 Edit config.yaml:
 
 # Use quotes. UNC works well with forward slashes on Windows.
-base_directory: '//server-or-host/'
-output_directory: '//server-or-host/'
+base_directory: '//server-or-host/Client/CLIENTS/Client Statements'
+output_directory: '//server-or-host/Client/Generic/Performance/statement_finder_output'
 logo_path: ''        # optional, only used by the GUI
 log_file: 'logs/activity.log'
 
 
-# Tip: You can also pass --base-dir and --output-dir on the CLI to override config values.
+Tip: You can also pass --base-dir and --output-dir on the CLI to override config values.
 
-### Usage
-CLI
+---
+## Usage
+### CLI
 # Show help
 statement-finder --help
 
@@ -107,20 +110,21 @@ statement-finder `
 
 --types: comma-separated codes (e.g., K-1,CC,STMT). Matching uses “whole-word-ish” boundaries, so CC will not match inside ACCOUNTS.
 
-# Override paths when needed:
+Override paths when needed:
 
 statement-finder `
   --base-dir "//server/share/Client Statements" `
   --output-dir "//server/share/statement_finder_output" `
   --year 2025 --clients "Jones Family" --types "K-1"
 
-GUI
+### GUI
 statement-finder-gui
 
 
-# Enter Base/Output directories (pre-filled from config.yaml if present), Year, Month, Clients, and Types.
+Enter Base/Output directories (pre-filled from config.yaml if present), Year, Month, Clients, and Types.
 
-# Click Submit. The progress bar updates and a log appears below.
+Click Submit. The progress bar updates and a log appears below.
+---
 
 ## Output
 
@@ -138,16 +142,19 @@ File naming pattern
 {year_or_all}_{month_or_all}_statements_{client}_{types}.csv
 
 
-# Example:
+Example:
 2024_03-March_statements_Smith_Family_K-1_CC.csv
+---
 
-# Matching Rules
+## Matching Rules
 
 Client → case-insensitive substring in filename.
 Example: “Smith Family” matches 2024-03_Smith Family_STMT.pdf.
 
 Statement type → regex with letter boundaries to avoid partial matches.
 Example: CC matches _CC.pdf but not ACCOUNTS.pdf.
+
+---
 
 ## Project Layout
 statement_finder/
@@ -165,6 +172,8 @@ statement_finder/
 ├─ .gitignore
 ├─ pyproject.toml
 └─ README.md
+
+---
 
 ## Development
 # (optional) dev tools
@@ -184,6 +193,8 @@ pre-commit install
 
 CI runs tests and formatting checks on every push/PR.
 
+---
+
 ## Package to EXE (optional)
 
 If you want a single-file Windows executable:
@@ -198,6 +209,8 @@ pyinstaller --onefile --name StatementFinder `
 This creates dist\StatementFinder.exe.
 For a GUI build, point PyInstaller at src\statement_finder\gui.py instead and add --noconsole.
 
+---
+
 ## Use this as a Template
 
 Click Use this template on GitHub.
@@ -207,6 +220,8 @@ Search/replace statement_finder with your new project name.
 Copy config.example.yaml → config.yaml and set your paths.
 
 pip install -e ., then run statement-finder or statement-finder-gui.
+
+---
 
 ## Troubleshooting
 
@@ -225,9 +240,11 @@ Narrow the search with both --year and --clients. Large trees benefit from tight
 GUI doesn’t open
 The GUI requires a desktop session. Use the CLI on headless machines or remote servers.
 
-License
+---
+
+## License
 
 MIT — see LICENSE.
 
 Portions of this project were drafted with AI assistance and reviewed by the author.
-
+'@ | Set-Content README.md -Encoding utf8
