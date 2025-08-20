@@ -1,0 +1,5 @@
+# Copy to config.yaml and edit paths
+base_directory: "YOUR_FILE_PATH_HERE/Client Statements"
+output_directory: "YOUR_FILE_PATH_HERE/statement_finder_output"
+logo_path: "YOUR_FILE_PATH_HERE/company_logo.png"   # optional
+log_file: "logs/activity.log"

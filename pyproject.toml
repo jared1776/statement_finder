@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "statement_finder"
+version = "0.1.0"
+description = "Find and package monthly client statements across manager folders. Exports CSV and ZIP."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Jared Arteaga" }]
+dependencies = ["pillow>=10,<11", "pyyaml>=6,<7"]
+
+[project.scripts]
+statement-finder = "statement_finder.cli:main"
+statement-finder-gui = "statement_finder.gui:main"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
