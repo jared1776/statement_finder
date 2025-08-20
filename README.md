@@ -69,7 +69,9 @@ statement-finder --year 2024 --month "03-March" `
 
 # Or launch the GUI
 statement-finder-gui
+
 ---
+
 ## Configuration
 
 Copy the example and update the paths:
@@ -89,6 +91,7 @@ log_file: 'logs/activity.log'
 Tip: You can also pass --base-dir and --output-dir on the CLI to override config values.
 
 ---
+
 ## Usage
 ### CLI
 # Show help
@@ -124,6 +127,7 @@ statement-finder-gui
 Enter Base/Output directories (pre-filled from config.yaml if present), Year, Month, Clients, and Types.
 
 Click Submit. The progress bar updates and a log appears below.
+
 ---
 
 ## Output
@@ -144,6 +148,7 @@ File naming pattern
 
 Example:
 2024_03-March_statements_Smith_Family_K-1_CC.csv
+
 ---
 
 ## Matching Rules
