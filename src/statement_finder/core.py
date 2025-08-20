@@ -8,9 +8,10 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable, List, Dict, Optional
+from typing import Dict, Iterable, List, Optional
 
 logger = logging.getLogger(__name__)
+
 
 def configure_logging(log_file: Path) -> None:
     log_file.parent.mkdir(parents=True, exist_ok=True)
@@ -26,7 +27,10 @@ def configure_logging(log_file: Path) -> None:
     if not logger.handlers:
         logger.addHandler(handler)
 
-def log_context(base_dir: Path, year: str, month: str, client_name: str, statement_type: str, output_file: str) -> dict:
+
+def log_context(
+    base_dir: Path, year: str, month: str, client_name: str, statement_type: str, output_file: str
+) -> dict:
     user = os.environ.get("USERNAME") or os.environ.get("USER") or "unknown"
     return {
         "user": user,
@@ -38,11 +42,16 @@ def log_context(base_dir: Path, year: str, month: str, client_name: str, stateme
         "output_file": output_file or "N/A",
     }
 
+
 def sanitize_filename(s: str) -> str:
     return "".join(c for c in s if c.isalnum() or c in (" ", "_", "-")).rstrip()
 
+
 def discover_managers(base_directory: Path) -> List[Path]:
-    return [p for p in base_directory.iterdir() if p.is_dir() and not p.name.lower().startswith("zz")]
+    return [
+        p for p in base_directory.iterdir() if p.is_dir() and not p.name.lower().startswith("zz")
+    ]
+
 
 def months_to_process(year_path: Path, month: Optional[str]) -> List[Path]:
     if month:
@@ -50,16 +59,19 @@ def months_to_process(year_path: Path, month: Optional[str]) -> List[Path]:
         return [m] if m.exists() else []
     return [p for p in year_path.iterdir() if p.is_dir()]
 
+
 def matches_client(filename: str, client_name: str) -> bool:
     if not client_name:
         return True
     return client_name.lower() in filename.lower()
+
 
 def matches_types(filename: str, types: Iterable[str]) -> bool:
     types = list(types)
     if not types:
         return True
     return any(re.search(rf"(?i)(?<![A-Za-z]){re.escape(t)}(?![A-Za-z])", filename) for t in types)
+
 
 def scan_manager(
     manager_path: Path,
@@ -106,13 +118,17 @@ def scan_manager(
             )
     return out
 
+
 def export_to_csv(statement_details: List[List[str]], output_file: Path) -> None:
     output_file.parent.mkdir(parents=True, exist_ok=True)
     with output_file.open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
-        w.writerow(["Manager", "Year", "Month", "File Name", "Client", "File Path", "Modified Date"])
+        w.writerow(
+            ["Manager", "Year", "Month", "File Name", "Client", "File Path", "Modified Date"]
+        )
         for row in statement_details:
             w.writerow(row[:-1])
+
 
 def zip_files(statement_details: List[List[str]], output_zip: Path) -> None:
     output_zip.parent.mkdir(parents=True, exist_ok=True)
@@ -121,6 +137,7 @@ def zip_files(statement_details: List[List[str]], output_zip: Path) -> None:
             fpath = Path(row[-1])
             if fpath.exists():
                 z.write(fpath, arcname=fpath.name)
+
 
 def process(
     base_directory: Path,
@@ -164,7 +181,14 @@ def process(
         export_to_csv(rows, out_csv)
         zip_files(rows, out_zip)
 
-        ctx = log_context(base_directory, year or "", month or "", client_name, ",".join(statement_types_list), str(out_csv))
+        ctx = log_context(
+            base_directory,
+            year or "",
+            month or "",
+            client_name,
+            ",".join(statement_types_list),
+            str(out_csv),
+        )
         logger.info("Processing summary", extra=ctx)
 
     return client_statements

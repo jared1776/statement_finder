@@ -3,13 +3,15 @@ from __future__ import annotations
 import queue
 import threading
 import tkinter as tk
-from tkinter import messagebox, font, scrolledtext, ttk
 from pathlib import Path
+from tkinter import font, messagebox, scrolledtext, ttk
 from typing import Optional
-from PIL import ImageTk, Image
-import yaml
 
-from .core import process, configure_logging
+import yaml
+from PIL import Image, ImageTk
+
+from .core import configure_logging, process
+
 
 def load_logo(logo_path: Optional[Path]) -> Optional[ImageTk.PhotoImage]:
     try:
@@ -18,6 +20,7 @@ def load_logo(logo_path: Optional[Path]) -> Optional[ImageTk.PhotoImage]:
     except Exception:
         pass
     return None
+
 
 def main() -> None:
     cfg = {}
@@ -46,10 +49,14 @@ def main() -> None:
     if logo_img:
         tk.Label(root, image=logo_img, bg="#e6f0fa").grid(row=0, column=0, columnspan=2, pady=10)
     else:
-        tk.Label(root, text="Logo", bg="#e6f0fa", fg="#616365", font=header_font).grid(row=0, column=0, columnspan=2, pady=10)
+        tk.Label(root, text="Logo", bg="#e6f0fa", fg="#616365", font=header_font).grid(
+            row=0, column=0, columnspan=2, pady=10
+        )
 
     def label(r, text):
-        tk.Label(root, text=text, font=header_font, bg="#e6f0fa", fg="#616365").grid(row=r, column=0, sticky=tk.W, padx=6, pady=4)
+        tk.Label(root, text=text, font=header_font, bg="#e6f0fa", fg="#616365").grid(
+            row=r, column=0, sticky=tk.W, padx=6, pady=4
+        )
 
     label(1, "Base directory:")
     base_entry = tk.Entry(root, font=body_font, width=48)
@@ -65,9 +72,26 @@ def main() -> None:
     year_entry = tk.Entry(root, font=body_font)
     year_entry.grid(row=3, column=1, padx=6, pady=4)
 
-    months = [""] + [f"{i:02d}-{m}" for i, m in enumerate(
-        ["January", "February", "March", "April", "May", "June",
-         "July", "August", "September", "October", "November", "December"], start=1)]
+    months = [""] + [
+        f"{i:02d}-{m}"
+        for i, m in enumerate(
+            [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+            ],
+            start=1,
+        )
+    ]
     label(4, "Month (e.g., 03-March):")
     month_combo = ttk.Combobox(root, values=months, font=body_font)
     month_combo.grid(row=4, column=1, padx=6, pady=4)
@@ -85,7 +109,9 @@ def main() -> None:
     output_area.grid(row=9, column=0, columnspan=2, padx=10, pady=10)
 
     progress_var = tk.DoubleVar()
-    ttk.Progressbar(root, variable=progress_var, maximum=100).grid(row=8, column=0, columnspan=2, padx=10, pady=6, sticky=tk.EW)
+    ttk.Progressbar(root, variable=progress_var, maximum=100).grid(
+        row=8, column=0, columnspan=2, padx=10, pady=6, sticky=tk.EW
+    )
 
     msg_q: "queue.Queue[tuple[str, str|float|None]]" = queue.Queue()
 
@@ -151,11 +177,14 @@ def main() -> None:
         output_area.insert(tk.END, "Processing...\n")
         threading.Thread(target=worker, daemon=True).start()
 
-    submit_btn = tk.Button(root, text="Submit", command=submit, bg="#009dce", fg="white", font=header_font)
+    submit_btn = tk.Button(
+        root, text="Submit", command=submit, bg="#009dce", fg="white", font=header_font
+    )
     submit_btn.grid(row=7, column=1, pady=8, sticky=tk.E)
 
     root.after(120, pump)
     root.mainloop()
+
 
 if __name__ == "__main__":
     main()
